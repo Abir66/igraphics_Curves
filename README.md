@@ -1,6 +1,7 @@
 # igraphics_Curves
 ## CSE 102 Term Project 
 ### Commands
+<pre>
 p/p   : pause
 r/R   : resume
 +/-   : increase/decrease tracer speed
@@ -24,7 +25,8 @@ u           : Undo Curve delete
 Enter       : show/hide commands
  
 right click on a curve to select.
-left click and drag to adjust
-right click again to deselect
+left click and drag to adjust.
+right click again to deselect.
  
-Esc : Quit programme",
+Esc : Quit programme<br>
+</pre>
