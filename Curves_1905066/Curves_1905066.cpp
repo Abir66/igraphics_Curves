@@ -709,8 +709,10 @@ void iMouse(int button, int state, int mx, int my)
 */
 void iKeyboard(unsigned char key)
 {
-
-    if(key == 'p' || key == 'P'){ //pause
+    if(key=='q' || key==27){
+        exit(0);
+    }
+    else if(key == 'p' || key == 'P'){ //pause
         iPauseTimer(0);
     }
     else if(key == 'r' || key == 'R'){ //resume
