@@ -11,7 +11,8 @@
 char allCommands[40][100] = {
     "p/p   : pause",
     "r/R   : resume",
-    "+/-   : increase/decrease tracer speed",
+    "+     : increase tracer speed",
+    "-     : decrease tracer speed",
     "a     : increase amplitude",
     "A     : decrease amplitude",
     "f     : increase frequency",
@@ -19,15 +20,15 @@ char allCommands[40][100] = {
     "s     : show/hide all curves",
     "b     : show/hide all tracers",
     "1-9   : show/hide ith tracer",
+    "x     : add/remove random Phase",
     "space : start moving curves",
     "<>    : move curves left/right",
-    "upper arrow : zoom in",
+    "up arrow    : zoom in",
     "down arrow  : zoom out",
     "left arrow  : move screen left",
     "right arrow : move screen right",
-    "x           : add/remove random Phase",
     "n           : add new curve",
-    "backspace   : delete last",
+    "backspace   : delete last curve",
     "u           : Undo Curve delete",
     "Enter       : show/hide commands",
     " ",
@@ -35,12 +36,12 @@ char allCommands[40][100] = {
     "left click and drag to adjust",
     "right click again to deselect",
     " ",
-    "Esc : Quit programme",
+    "Esc : Quit program",
 };
 
-int totalCommands = 27;
+int totalCommands = 28;
 
-//1280x720 or 1366x768
+//1280x720 or 1366x768 don't change this
 //screen variables.
 double totalWidth = 1280;
 double screenWidth = totalWidth;
@@ -48,12 +49,12 @@ double screenHeight = 720;
 double middleHeight = screenHeight/2;
 double smoothness = 1;   //less is smoother
 double pi = acos(-1);
-double myNameWidth = totalWidth*190/1280;
-double commandsWidth = totalWidth*320/1280; // commands width
+double myNameWidth = 190;//totalWidth*190/1280;
+double commandsWidth = 275;//totalWidth*275/1280;
 
 //curve roperties
-double frequency[50] = {1,0.6,2};
-double amplitude[50] = {100,50,150};
+double frequency[50] = {0.8,0.6,2}; //1,.6,2
+double amplitude[50] = {120,50,150}; //100,50,150
 int curveType[50] = {1,0,1};
 double initialPhase[50] = {0,0,0};
 int showBall[50] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
