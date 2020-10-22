@@ -41,7 +41,7 @@ char allCommands[40][100] = {
 
 int totalCommands = 28;
 
-//1280x720 or 1366x768 don't change this
+//1280x720  don't change this
 //screen variables.
 double totalWidth = 1280;
 double screenWidth = totalWidth;
@@ -580,6 +580,12 @@ void iDraw()
     iSetColor(22,22,22);
     iFilledRectangle(0,0,totalWidth,screenHeight);
 
+    //commands background
+    if(showCommands){
+        iSetColor(30,30,30);
+        iFilledRectangle(totalWidth-commandsWidth,0,commandsWidth,screenHeight);
+    }
+
 
     // draw the middle line
     iSetColor(255,255,255);
@@ -614,7 +620,7 @@ void iDraw()
     //showing commands
     if(showCommands==1){
         iSetColor(255,255,255);
-        int leftpos = totalWidth - commandsWidth +5;
+        int leftpos = totalWidth - commandsWidth +10;
         double d = 20*screenHeight/750;
         double uppos = screenHeight - d;
         int i;
