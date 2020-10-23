@@ -164,9 +164,9 @@ void calculateDraw(){  //calculating drawn curve properties
             if(frq<0) frq *= -1;
             if(frq>3.5) frq = 3.5;
 
-            phase = -currentPhase * pi/180 + pi/2 - frq * (drawHighX ) * pi/180;
+            phase = -currentPhase * pi/180 + pi/2 - frq * (drawHighX + moveX) * pi/180;
             if(phase > 2*pi) phase -= 2*pi;
-            if(phase< -2*pi) phase += 2*pi;
+            if(phase < -2*pi) phase += 2*pi;
 
             totalCurves++;
 
