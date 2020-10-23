@@ -147,6 +147,7 @@ int drawCurveIdx = -1;
 
 void calculateDraw(){  //calculating drawn curve properties
 
+    //as it is printing in curveDraw i have to set the amp phase and frq in reverse. for zooming and movement
 
     int i;
     int possible = 0;
@@ -154,7 +155,7 @@ void calculateDraw(){  //calculating drawn curve properties
 
     if(drawLowY < zero && drawHighY > zero){
 
-        amp = abs(drawHighY - zero);
+        amp = abs(drawHighY - zero) / (ampMulUser*ampMulZoom);
         x = drawHighX - drawLowX;
 
         if(abs(x)>30){
@@ -162,13 +163,16 @@ void calculateDraw(){  //calculating drawn curve properties
 
             frq = 180/x;
             if(frq<0) frq *= -1;
-            if(frq>3.5) frq = 3.5;
+            if(frq>4) frq = 4;
+
 
             phase = -currentPhase * pi/180 + pi/2 - frq * (drawHighX + moveX) * pi/180;
             if(phase > 2*pi) phase -= 2*pi;
             if(phase < -2*pi) phase += 2*pi;
 
+            frq = frq / (frqMulUser*frqMulZoom);
             totalCurves++;
+            maxTotalCurves = totalCurves;
 
             //adding new curve to the main curve list
             //it will be called by curveDraw
@@ -194,7 +198,7 @@ void calculateDraw(){  //calculating drawn curve properties
 
     }
 
-
+    //hopefully it works now
 }
 
 void checkCaught(int mx, int my, int id){ // to check if user clicked on a curve
