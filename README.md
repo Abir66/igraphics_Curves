@@ -21,7 +21,8 @@ right arrow : move screen right
 x           : add/remove random Phase
 n           : add new curve
 backspace   : delete last
-u           : Undo Curve delete
+u           : undo Curve delete
+d           : drawing on/off
 Enter       : show/hide commands
  
 right click on a curve to select.
