@@ -153,26 +153,26 @@ void calculateDraw(){  //calculating drawn curve properties
     double zero = middleHeight,amp,frq,phase,x;
 
     if(drawLowY < zero && drawHighY > zero){
-        
+
         amp = abs(drawHighY - zero);
         x = drawHighX - drawLowX;
 
         if(abs(x)>30){
 
-            
+
             frq = 180/x;
             if(frq<0) frq *= -1;
             if(frq>3.5) frq = 3.5;
-            
-            phase = pi/2 - frq * (drawHighX ) * pi/180; 
+
+            phase = -currentPhase * pi/180 + pi/2 - frq * (drawHighX ) * pi/180;
             if(phase > 2*pi) phase -= 2*pi;
             if(phase< -2*pi) phase += 2*pi;
-            
+
             totalCurves++;
-            
+
             //adding new curve to the main curve list
             //it will be called by curveDraw
-            
+
             amplitude[totalCurves-1] = amp;
             frequency[totalCurves-1] = frq;
             initialPhase[totalCurves-1] = phase;
@@ -181,8 +181,8 @@ void calculateDraw(){  //calculating drawn curve properties
             drawCurveIdx = totalCurves - 1;
             //printf("%lf %lf %lf %lf\n",x,amp,frq,phase);
             //printf("%lf %lf %lf %lf\n\n",drawHighX,drawHighY,drawLowX,drawLowY);
-            
-            
+
+
             //Initailizing for using again
             drawHighX = 0;
             drawHighY = 0;
@@ -201,7 +201,7 @@ void checkCaught(int mx, int my, int id){ // to check if user clicked on a curve
 
 
     //if clicked on a curve, saves the x,y in caughtInitialX and caughtInitialY
-    
+
     //this was a terrible idea
 
     if(id==-1){ //if no curves is selected
@@ -239,7 +239,7 @@ void checkCaught(int mx, int my, int id){ // to check if user clicked on a curve
 
 
     else{ // if a curve is selected
-            
+
         double caughtY = 0,addedPhase = 0;
         int i;
 
@@ -267,7 +267,7 @@ void checkCaught(int mx, int my, int id){ // to check if user clicked on a curve
             caughtInitialY = caughtY;
 
         }
-            
+
     }
 
 }
@@ -338,7 +338,7 @@ void changeCaught(int mx, int my){ //to edit the selected curve
 
 void adderMenu(){ //for displaying the editing menu of the new curve. used in editNewCurve
 
-    
+
     //button names
     iSetColor(255,255,255);
     double x = totalWidth - 250+25;
@@ -535,7 +535,7 @@ void ballChange(){ // for Calculating the x-coordinate of the balls/tracers
         ballX = screenWidth; //so that the balls don't hide behind the commands menu
     }
     if(ballX<0) dir*=-1;
-    
+
 }
 
 
@@ -638,7 +638,7 @@ void change(){ // called by iSetTimer
 
     // for moving balls
     ballChange();
-    
+
     // for moving curves
     if(showVelocity) velocity();
 
