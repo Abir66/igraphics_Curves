@@ -29,8 +29,8 @@ char allCommands[40][100] = {
     "right arrow : move screen right",
     "n           : add new curve",
     "backspace   : delete last curve",
-    "u           : Undo Curve delete",
-    "Enter       : show/hide commands",
+    "u           : undo Curve delete",
+    "d           : drawing on/off",
     " ",
     "right click on a curve to select",
     "left click and drag to adjust",
@@ -128,6 +128,64 @@ double adderHeight = 0;
 double menuHeight = 0;
 
 
+//drawing new curve
+double drawX[10000] = {};
+double drawY[10000] = {0};
+int drawN = -1;
+int drawMode = 0;
+int showDraw = 0;
+double drawHighY = 0;
+double drawHighX = 0;
+double drawLowY = 100000;
+double drawLowX = 0;
+int drawXid =-1;
+int drawOne = 0;
+int drawCurveIdx = -1;
+
+void calculateDraw(){
+
+
+    int i;
+    int possible = 0;
+    double zero = middleHeight,amp,frq,phase,x;
+
+    if(drawLowY < zero && drawHighY > zero){
+        amp = abs(drawHighY - zero);
+        x = drawHighX - drawLowX;
+
+        if(abs(x)>30){
+
+
+            frq = 180/x;
+            if(frq<0) frq *= -1;
+            if(frq>4) frq = 4;
+            phase = pi/2 - frq * (drawHighX ) * pi/180; // or 90-drawHighX
+
+            if(phase > 2*pi) phase -= 2*pi;
+            if(phase< -2*pi) phase += 2*pi;
+            totalCurves++;
+            amplitude[totalCurves-1] = amp;
+            frequency[totalCurves-1] = frq;
+            initialPhase[totalCurves-1] = phase;
+            curveType[totalCurves-1] = 1;
+            drawOne = 1;
+            drawCurveIdx = totalCurves - 1;
+            //printf("%lf %lf %lf %lf\n",x,amp,frq,phase);
+            //printf("%lf %lf %lf %lf\n\n",drawHighX,drawHighY,drawLowX,drawLowY);
+
+            drawHighX = 0;
+            drawHighY = 0;
+            drawLowY = 10000;
+            drawLowX = 0;
+
+        }
+
+
+
+    }
+
+
+}
 
 void checkCaught(int mx, int my, int id){ // to check if user clicked on a curve
 
@@ -543,6 +601,7 @@ void curveDraw(){ // drawing the curves from the array
             resultY += y;
 
             if(caughtidx==i) iSetColor(255,30,30);
+            else if(drawOne==1 && i == drawCurveIdx) iSetColor(53,152,255); // drawing
             else iSetColor(255,255,255);
             y += middleHeight;
             iPoint(x,y);
@@ -595,10 +654,30 @@ void iDraw()
     if(showCurve) curveDraw();
     if(showAllBalls) ball();
 
+
+    //drawing
+    if(curveCaught==1) {
+        drawMode = 0;
+        drawOne = 0;
+        drawCurveIdx = -1;
+    }
+    if(drawMode){
+
+        if(showDraw==1){
+            int i;
+            iSetColor(53,152,255);
+            for(i=0;i<=drawN;i++){
+                iFilledCircle(drawX[i],drawY[i],2);
+            }
+        }
+
+
+    }
+
     //command and name message
     iSetColor(255,255,255);
-    if(showCommands) iText(10,10,"press Enter to hide commands");
-    else iText(10,10,"press Enter to view commands");
+    if(showCommands) iText(10,10,"Press Enter to hide commands");
+    else iText(10,10,"Press Enter to view commands");
     iText(totalWidth-myNameWidth,10,"Abir Muhtasim - 1905066");
 
 
@@ -607,6 +686,15 @@ void iDraw()
         iSetColor(255,30,30);
         iText(10,50,"Curve selected. Left Click on a point and drag to adjust.");
         iText(10,30,"Right Click to deselect");
+    }
+
+
+    //drawing mode message
+    else if(drawMode){
+        iSetColor(53,152,255);
+        if(drawCurveIdx !=-1) iText(10,70,"Curve added. Press backspace to remove curves");
+        iText(10,50,"Drawing: ON. Left click and drag to draw curves.");
+        iText(10,30,"Press d to turn off");
     }
 
 
@@ -654,6 +742,27 @@ void iMouseMove(int mx, int my)
             changeCaught(mx,my);
         }
     }
+
+    else if(drawMode==1){
+        showDraw = 1;
+        drawN++;
+        if(drawN>=99998) drawN = 0;
+        drawX[drawN] = mx;
+        drawY[drawN] = my;
+
+        if(drawHighY<my){
+            drawHighY = my;
+            drawHighX = mx;
+            drawXid = drawN;
+        }
+
+        if(drawLowY>my){
+            drawLowY = my;
+            drawLowX = mx;
+        }
+    }
+
+
 
 
     //printf("x = %d, y= %d\n",mx,my);
@@ -707,6 +816,14 @@ void iMouse(int button, int state, int mx, int my)
             caughtInitialY = 0;
         }
 
+    }
+    if(button == GLUT_LEFT_BUTTON && state == GLUT_UP){
+
+        if(drawMode){
+            showDraw = 0;
+            calculateDraw();
+            drawN = -1;
+        }
     }
 }
 
@@ -764,6 +881,7 @@ void iKeyboard(unsigned char key)
     }
     else if(key == '\b'){ //delete last curve
        if(totalCurves>=1) totalCurves--;
+       drawCurveIdx = -1;
     }
     else if(key=='u' || key == 'U'){ //undo delete
         if(maxTotalCurves > totalCurves) totalCurves++;
@@ -807,6 +925,18 @@ void iKeyboard(unsigned char key)
 
 
         addingNewCurve = 1;
+
+    }
+    else if(key=='d'){
+        if(drawMode==1) {
+                drawMode = 0;
+                drawOne = 0;
+                drawCurveIdx = -1;
+        }
+        else if(curveCaught!=1){
+                drawMode = 1;
+                showDraw = 1;
+        }
 
     }
 }
