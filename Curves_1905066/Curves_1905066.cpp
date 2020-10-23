@@ -281,8 +281,8 @@ void changeCaught(int mx, int my){ //to edit the selected curve
 
     int idx = caughtidx;
     double oldd=0,newd=0,x = caughtInitialX;
-    oldd = middleHeight - caughtInitialY;
-    newd = middleHeight - my;
+    oldd = (middleHeight - caughtInitialY);
+    newd = (middleHeight - my);
 
 
     // not sure if the first two will work
@@ -317,15 +317,16 @@ void changeCaught(int mx, int my){ //to edit the selected curve
     }
 
     else{
-        double oldamp = amplitude[idx];
+        double oldamp = amplitude[idx]/(ampMulUser*ampMulZoom);
         amplitude[idx] = amplitude[idx] * newd / oldd;
+
         if(amplitude[idx]!=0){
                 double oldfrq = frequency[idx];
-                frequency[idx] = frequency[idx] * amplitude[idx] / oldamp; //squeez
+                frequency[idx] = oldfrq * newd/ oldd; //squeez
                 if(frequency[idx]>1.5) frequency[idx] = 1.5;
                 double newfrq = frequency[idx];
 
-                initialPhase[idx] += (oldfrq * x - newfrq*mx)*pi/180; // f1x1 = f2x2 + phase difference
+                initialPhase[idx] += ((oldfrq*frqMulUser*frqMulZoom * (x+moveX) + - newfrq*frqMulUser*frqMulZoom*(mx+moveX))*pi/180 ); // f1x1 = f2x2 + phase difference
                 if(initialPhase[idx] < - 2*pi) initialPhase[idx] += 2*pi;
                 if(initialPhase[idx] > 2* pi ) initialPhase[idx] -= 2*pi;
 
