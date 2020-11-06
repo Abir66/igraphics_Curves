@@ -1,3 +1,4 @@
+
 /*
     Abir Muhtasim
     1905066
@@ -155,7 +156,8 @@ void calculateDraw(){  //calculating drawn curve properties
 
     if(drawLowY < zero && drawHighY > zero){
 
-        amp = abs(drawHighY - zero) / (ampMulUser*ampMulZoom);
+        //amp = (abs(drawHighY - zero) + abs(drawLowY-zero))/2 / (ampMulUser*ampMulZoom); //avarage
+        amp = abs(drawHighY - zero)/ (ampMulUser*ampMulZoom); //high point
         x = drawHighX - drawLowX;
 
         if(abs(x)>30){
@@ -319,7 +321,7 @@ void changeCaught(int mx, int my){ //to edit the selected curve
     else{
         double oldamp = amplitude[idx]/(ampMulUser*ampMulZoom);
         amplitude[idx] = amplitude[idx] * newd / oldd;
-
+        if(amplitude[idx]>500) amplitude[idx] = 500;
         if(amplitude[idx]!=0){
                 double oldfrq = frequency[idx];
                 frequency[idx] = oldfrq * newd/ oldd; //squeez
@@ -596,6 +598,7 @@ void velocity(){ //for moving curves
 
 void curveDraw(){ // drawing the curves from the array
 
+    //with iPoint
 
     double x,tempX,y,curvex,resultY,addedPhase = 0;
     int i;
@@ -636,6 +639,107 @@ void curveDraw(){ // drawing the curves from the array
 
 
     }
+
+
+
+    /*
+    //With iLine
+    double x,tempX,tempY, y,curvex,resultY,addedPhase = 0;
+    int i;
+    addedPhase = currentPhase * pi/180;
+
+    for(i=0;i<totalCurves;i++){
+
+        double a = ampMulUser*ampMulZoom*amplitude[i]; //amplitude, ampMulUser is for just amp, ampMulZoom is for zoom
+        double f = frqMulUser*frqMulZoom*frequency[i]; //frequency, frqMulUser is for just frq, frqMulZoom is for zoom
+        double theta = initialPhase[i] + addedPhase;   // total phase.
+
+        if(caughtidx==i) iSetColor(255,30,30);
+        else if(drawOne==1 && i == drawCurveIdx) iSetColor(53,152,255); // drawing
+        else iSetColor(255,255,255);
+
+        tempX = 0;
+        if(curveType[i])
+            tempY = a*sin(0*f + theta);
+        else
+            tempY = a*cos(0*f + theta);
+        tempY += middleHeight;
+
+        for(x=smoothness;x<=screenWidth;x=x+smoothness){
+            //to disable movement remove moveX , left and right
+            curvex = (x+moveX)*pi/180; // converting to radian
+
+            if(curveType[i])
+                y = a*sin(curvex*f + theta);
+            else
+                y = a*cos(curvex*f + theta);
+
+
+            y += middleHeight;
+            iLine(tempX,tempY,x,y);
+            tempX = x;
+            tempY = y;
+        }
+
+    }
+
+
+    //resultant
+    tempX = 0;
+    for(i=0;i<totalCurves;i++){
+
+
+        double a = ampMulUser*ampMulZoom*amplitude[i]; //amplitude, ampMulUser is for just amp, ampMulZoom is for zoom
+        double f = frqMulUser*frqMulZoom*frequency[i]; //frequency, frqMulUser is for just frq, frqMulZoom is for zoom
+        double theta = initialPhase[i] + addedPhase;   // total phase.
+
+        if(curveType[i])
+            y = a*sin(theta);
+        else
+            y = a*cos(theta);
+
+        resultY += y;
+
+
+    }
+    tempY = resultY + middleHeight;
+
+    iSetColor(255,255,255); //51,153,255
+    for(x=smoothness;x<=screenWidth;x=x+smoothness){
+
+        resultY = 0;
+        //to disable movement remove moveX , left and right
+        curvex = (x+moveX)*pi/180; // converting to radian
+
+        for(i=0;i<totalCurves;i++){
+
+
+            double a = ampMulUser*ampMulZoom*amplitude[i]; //amplitude, ampMulUser is for just amp, ampMulZoom is for zoom
+            double f = frqMulUser*frqMulZoom*frequency[i]; //frequency, frqMulUser is for just frq, frqMulZoom is for zoom
+            double theta = initialPhase[i] + addedPhase;   // total phase.
+
+            if(curveType[i])
+                y = a*sin(curvex*f + theta);
+            else
+                y = a*cos(curvex*f + theta);
+
+            resultY += y;
+
+
+        }
+
+
+
+        resultY += middleHeight;
+        iLine(tempX,tempY,x,resultY);
+        tempX = x;
+        tempY = resultY;
+
+
+    }
+
+    */
+
 }
 
 
@@ -899,7 +1003,12 @@ void iKeyboard(unsigned char key)
     }
     else if(key == 'b'){ //show all balls
         if(showAllBalls==1) showAllBalls = 0;
-        else showAllBalls = 1;
+        else {
+            showAllBalls = 1;
+            int i;
+            for(i=0;i<totalCurves;i++) showBall[i] = 1;
+            showResult = 1;
+        }
     }
     else if(key == '\b'){ //delete last curve
        if(totalCurves>=1) totalCurves--;
@@ -1003,6 +1112,7 @@ int main()
 {
     //place your own initialization codes here.
     iSetTimer(25,change);
-    iInitialize(screenWidth, screenHeight, "Curves 1905066");
+    iInitialize(totalWidth, screenHeight, "Curves 1905066");
     return 0;
 }
+
