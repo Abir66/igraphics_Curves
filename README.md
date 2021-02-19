@@ -2,18 +2,18 @@
 ## CSE 102 Term Project 
 ### Commands
 <pre>
-p/p   : pause
-r/R   : resume
-+/-   : increase/decrease tracer speed
-a     : increase amplitude
-A     : decrease amplitude
-f     : increase frequency
-F     : decrease frequency
-s     : show/hide all curves
-b     : show/hide all tracers
-1-9   : show/hide ith tracer
-space : start moving curves
-<>    : move curves left/right
+p           : pause
+r           : resume
++/-         : increase/decrease tracer speed
+a           : increase amplitude
+A           : decrease amplitude
+f           : increase frequency
+F           : decrease frequency
+s           : show/hide all curves
+b           : show/hide all tracers
+1-9         : show/hide ith tracer
+space       : start moving curves
+<>          : move curves left/right
 upper arrow : zoom in
 down arrow  : zoom out
 left arrow  : move screen left
