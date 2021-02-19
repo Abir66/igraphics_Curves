@@ -9,21 +9,22 @@
 #include<stdio.h>
 #include<math.h>
 #include<string.h>
+#include<windows.h>
 char allCommands[40][100] = {
-    "p/p   : pause",
-    "r/R   : resume",
-    "+     : increase tracer speed",
-    "-     : decrease tracer speed",
-    "a     : increase amplitude",
-    "A     : decrease amplitude",
-    "f     : increase frequency",
-    "F     : decrease frequency",
-    "s     : show/hide all curves",
-    "b     : show/hide all tracers",
-    "1-9   : show/hide ith tracer",
-    "x     : add/remove random Phase",
-    "space : start moving curves",
-    "<>    : move curves left/right",
+    "p           : pause",
+    "r           : resume",
+    "+           : increase tracer speed",
+    "-           : decrease tracer speed",
+    "a           : increase amplitude",
+    "A           : decrease amplitude",
+    "f           : increase frequency",
+    "F           : decrease frequency",
+    "s           : show/hide all curves",
+    "b           : show/hide all tracers",
+    "1-9         : show/hide ith tracer",
+    "x           : add/remove random Phase",
+    "space       : start moving curves",
+    "<>          : move curves left/right",
     "up arrow    : zoom in",
     "down arrow  : zoom out",
     "left arrow  : move screen left",
@@ -44,17 +45,17 @@ int totalCommands = 28;
 
 //1280x720  don't change this
 //screen variables.
-double totalWidth = 1280;
+double totalWidth = GetSystemMetrics(SM_CXSCREEN);
 double screenWidth = totalWidth;
-double screenHeight = 720;
+double screenHeight = GetSystemMetrics(SM_CYSCREEN);
 double middleHeight = screenHeight/2;
 double smoothness = 1;   //less is smoother
 double pi = acos(-1);
 double myNameWidth = 190;//totalWidth*190/1280;
-double commandsWidth = 275;//totalWidth*275/1280;
+double commandsWidth = 275 + 100;//totalWidth*275/1280;
 
 //curve roperties
-double frequency[50] = {0.8,0.6,2}; //1,.6,2
+double frequency[50] = {0.8,0.6,1}; //1,.6,2
 double amplitude[50] = {120,50,150}; //100,50,150
 int curveType[50] = {1,0,1};
 double initialPhase[50] = {0,0,0};
@@ -97,7 +98,7 @@ double moveX = 0;
 //ball properties
 double ballX = 0;
 double ballY = 0;
-double ballRadius = 5;
+double ballRadius = 10;
 double balldelX=5;
 double ballSpeed = 0.75;
 
@@ -118,8 +119,8 @@ double newCurvePhase = 0;
 //curve adder menu properties
 double button1X = 0;
 double button2X = 0;
-double buttonLength = 0;
-double buttonHeight = 0;
+double buttonLength = 50;
+double buttonHeight = 20;
 double buttonDistance = 0;
 double buttonY = 0;
 double adderButtonX = 0;
@@ -143,6 +144,7 @@ double drawLowX = 0;
 int drawXid =-1;
 int drawOne = 0;
 int drawCurveIdx = -1;
+double graph = 20;
 
 
 
@@ -346,52 +348,77 @@ void changeCaught(int mx, int my){ //to edit the selected curve
 void adderMenu(){ //for displaying the editing menu of the new curve. used in editNewCurve
 
 
+
+
     //button names
     iSetColor(255,255,255);
-    double x = totalWidth - 250+25;
-    iText(x,150,"Amplitude : ");
-    iText(x,120,"Frequency : ");
-    iText(x,90,"Phase     : ");
-    iText(x,60,"Type:     : ");
+    double x = totalWidth - 250+25 - 50;
+
+    //button variables to check if its pressed
+    buttonLength = 70;
+    buttonHeight = 30;
+    button1X = x+100;
+    button2X = button1X+buttonLength +10;
+
+    buttonDistance = 40;
+    buttonY = 60-5 + 10;
+
+    adderButtonX = x-30;
+    adderButtonY = 40-25;
+    cancelButtonX = adderButtonX+adderLength+20;
+    adderLength = 130;
+    adderHeight = 35;
+    menuHeight = 150-5+20;
+
+
+    int xx=75,dd = 42;
+
+    iText(x-30,xx+dd*3,"Amplitude : ",GLUT_BITMAP_9_BY_15);
+    iText(x-30,xx+dd*2,"Frequency : ",GLUT_BITMAP_9_BY_15);
+    iText(x-30,xx+dd,"Phase     : ",GLUT_BITMAP_9_BY_15);
+    iText(x-30,xx,"Type:     : ",GLUT_BITMAP_9_BY_15);
 
 
     //left buttons
     iSetColor(255,153,51);
-    iFilledRectangle(x+100,60-5,50,20);
-    iFilledRectangle(x+100,90-5,50,20);
-    iFilledRectangle(x+100,120-5,50,20);
-    iFilledRectangle(x+100,150-5,50,20);
+
+    iFilledRectangle(button1X,buttonY,                buttonLength,buttonHeight);
+    iFilledRectangle(button1X,buttonY + buttonDistance,buttonLength,buttonHeight);
+    iFilledRectangle(button1X,buttonY + buttonDistance*2,buttonLength,buttonHeight);
+    iFilledRectangle(button1X,buttonY + buttonDistance*3,buttonLength,buttonHeight);
 
 
     //right buttons
     iSetColor(51, 153,255);
-    iFilledRectangle(x+100+60,60-5,50,20);
-    iFilledRectangle(x+100+60,90-5,50,20);
-    iFilledRectangle(x+100+60,120-5,50,20);
-    iFilledRectangle(x+100+60,150-5,50,20);
-
+    iFilledRectangle(button2X,buttonY,buttonLength,buttonHeight);
+    iFilledRectangle(button2X,buttonY + buttonDistance,buttonLength,buttonHeight);
+    iFilledRectangle(button2X,buttonY + buttonDistance*2,buttonLength,buttonHeight);
+    iFilledRectangle(button2X,buttonY + buttonDistance*3,buttonLength,buttonHeight);
     //button texts
     //iSetColor(255,255,255);
+    xx = x+100+30;
+    int dx = 80, yy = 75,dy = 40;
     iSetColor(0,0,0);
-    iText(x+100+13,60+2, "sin");
-    iText(x+100+20,90, "-");
-    iText(x+100+20,120, "-");
-    iText(x+100+20,150, "-");
+    iText(xx-7,yy+2, "sin",GLUT_BITMAP_9_BY_15);
+    iText(xx,yy+dy, "-",GLUT_BITMAP_9_BY_15);
+    iText(xx,yy+dy*2, "-",GLUT_BITMAP_9_BY_15);
+    iText(xx,yy+dy*3, "-",GLUT_BITMAP_9_BY_15);
 
-    iText(x+100+60+13,60+2, "cos");
-    iText(x+100+60+20,90, "+");
-    iText(x+100+60+20,120, "+");
-    iText(x+100+60+20,150, "+");
+    iText(xx+dx-7,yy+2, "cos",GLUT_BITMAP_9_BY_15);
+    iText(xx+dx,yy+dy, "+",GLUT_BITMAP_9_BY_15);
+    iText(xx+dx,yy+dy*2, "+",GLUT_BITMAP_9_BY_15);
+    iText(xx+dx,yy+dy*3, "+",GLUT_BITMAP_9_BY_15);
 
     //add and cancel
     iSetColor(255,255,255);
-    iRectangle(x,40-15,100,25);
-    iRectangle(x+110,40-15,100,25);
+    iRectangle(adderButtonX,adderButtonY,adderLength,adderHeight);
+    iRectangle(adderButtonX+adderLength+20,adderButtonY,adderLength,adderHeight);
 
-    iText(x+37,40-15+10, "ADD");
-    iText(x+110+27,40-15+10, "CANCEL");
+    iText(x+37-20,40-15+3, "ADD",GLUT_BITMAP_9_BY_15);
+    iText(x+110+27+25,40-15+3, "CANCEL",GLUT_BITMAP_9_BY_15);
 
 
+    /*
     //button variables to check if its pressed
     button1X = x+100;
     button2X = x+100+60;
@@ -406,8 +433,10 @@ void adderMenu(){ //for displaying the editing menu of the new curve. used in ed
     adderLength = 100;
     adderHeight = 25;
     menuHeight = 150-5+20;
+    */
 
 }
+
 
 
 void editNewCurve(int mx, int my){ //for editing the new temporary curve from the menu
@@ -583,7 +612,7 @@ void ball(){  // for displaying the balls/tracers
         iSetColor(255,255,255);
         resultY += middleHeight;
         iFilledCircle(ballX,resultY,ballRadius);
-        iCircle(ballX, resultY, ballRadius+3); //ring around the resultant circle
+        iCircle(ballX, resultY, ballRadius+5); //ring around the resultant circle
     }
 
 }
@@ -594,6 +623,7 @@ void velocity(){ //for moving curves
     if(currentPhase>360) currentPhase-= 360;
     else if(currentPhase<-360) currentPhase += 360;
 }
+
 
 
 void curveDraw(){ // drawing the curves from the array
@@ -762,23 +792,57 @@ void iDraw()
     iClear();
 
     //background
-    iSetColor(22,22,22);
-    iFilledRectangle(0,0,totalWidth,screenHeight);
 
-    //commands background
+
+    iSetColor(25,25,25);
+
+    iFilledRectangle(0,0,screenWidth,screenHeight);
+
+
+    double d = graph, n = screenHeight/d;
+
+
+    iSetColor(50,50,50);
+    for(int i=0;i<=n;i++){
+        iLine(0,i*d,screenWidth,i*d);
+    }
+    n = screenWidth/d;
+    for(int i=0;i<=n;i++){
+        iLine(i*d,0,i*d,screenHeight);
+    }
+
+
+    d = d*5, n = screenHeight/d;
+
+
+    iSetColor(100,100,100);
+    for(int i=0;i<=n;i++){
+        iLine(0,i*d,screenWidth,i*d);
+    }
+    n = screenWidth/d;
+    for(int i=0;i<=n;i++){
+        iLine(i*d,0,i*d,screenHeight);
+    }
+
+
+     //show curves and balls
+    if(showCurve) curveDraw();
+    if(showAllBalls) ball();
+
+
+
+     //commands background
     if(showCommands){
-        iSetColor(30,30,30);
+        iSetColor(50,50,50);
         iFilledRectangle(totalWidth-commandsWidth,0,commandsWidth,screenHeight);
     }
+
 
 
     // draw the middle line
     iSetColor(255,255,255);
     iLine(0,middleHeight,screenWidth,middleHeight);
 
-    //show curves and balls
-    if(showCurve) curveDraw();
-    if(showAllBalls) ball();
 
 
     //drawing
@@ -802,48 +866,65 @@ void iDraw()
 
     //command and name message
     iSetColor(255,255,255);
-    if(showCommands) iText(10,10,"Press Enter to hide commands");
-    else iText(10,10,"Press Enter to view commands");
-    iText(totalWidth-myNameWidth,10,"Abir Muhtasim - 1905066");
+    if(showCommands) iText(10,10,"Press Enter to hide commands",GLUT_BITMAP_9_BY_15);
+    else iText(10,10,"Press Enter to view commands",GLUT_BITMAP_9_BY_15);
+    //iText(totalWidth-myNameWidth - 30,10,"Abir Muhtasim - 1905066",GLUT_BITMAP_9_BY_15);
 
 
     //curve edit message
     if(curveCaught){
         iSetColor(255,30,30);
-        iText(10,50,"Curve selected. Left Click on a point and drag to adjust.");
-        iText(10,30,"Right Click to deselect");
+        iText(10,50,"Curve selected. Left Click on a point and drag to adjust.",GLUT_BITMAP_9_BY_15);
+        iText(10,30,"Right Click to deselect",GLUT_BITMAP_9_BY_15);
     }
 
 
     //drawing mode message
     else if(drawMode){
         iSetColor(53,152,255);
-        if(drawCurveIdx !=-1) iText(10,70,"Curve added. Press backspace to remove curves");
-        iText(10,50,"Drawing: ON. Left click and drag to draw curves.");
-        iText(10,30,"Press d to turn off");
+        if(drawCurveIdx !=-1) iText(10,70,"Curve added. Press backspace to remove curves",GLUT_BITMAP_9_BY_15);
+        iText(10,50,"Drawing: ON. Left click and drag to draw curves.",GLUT_BITMAP_9_BY_15);
+        iText(10,30,"Press d to turn off",GLUT_BITMAP_9_BY_15);
     }
 
 
-    //adding new curve
-    if(addingNewCurve==1){
-        curveAdder();
-        adderMenu();
-    }
+
+
+
+
 
 
     //showing commands
     if(showCommands==1){
         iSetColor(255,255,255);
-        int leftpos = totalWidth - commandsWidth +10;
+        int leftpos = totalWidth - commandsWidth + 20 ;
         double d = 20*screenHeight/750;
         double uppos = screenHeight - d;
         int i;
         for(i=0;i<totalCommands;i++){
-            iText(leftpos,uppos,allCommands[i]);
+            iText(leftpos,uppos,allCommands[i],GLUT_BITMAP_9_BY_15);
             uppos -= d;
         }
 
+        iLine(leftpos,uppos,leftpos+335,uppos);
+
+
+
     }
+
+     //adding new curve
+    if(addingNewCurve==1){
+
+        iSetColor(50,50,50);
+        //iSetColor(25,250,25);
+        iFilledRectangle(totalWidth-commandsWidth,0,commandsWidth,230);
+        curveAdder();
+        adderMenu();
+    }
+
+
+
+
 
     //done
 }
@@ -852,8 +933,15 @@ void iDraw()
 	function iMouseMove() is called when the user presses and drags the mouse.
 	(mx, my) is the position where the mouse pointer is.
 */
+
+
+
+
+
+
 void iMouseMove(int mx, int my)
 {
+
 
     if(curveCaught==1) {
         if(addingNewCurve==1){
@@ -899,8 +987,24 @@ void iMouseMove(int mx, int my)
 	function iMouse() is called when the user presses/releases the mouse.
 	(mx, my) is the position where the mouse pointer is.
 */
+
+
+void iPassiveMouseMove(int mx, int my)
+{
+	//place your code here
+    //printf("%d %d\n",mx,my);
+	/*mposx = mx;
+	mposy = my;
+	if(mx== 2){}        /*Something to do with mx*/
+	//else if(my== 2){}   /*Something to do with my*/
+
+}
+
 void iMouse(int button, int state, int mx, int my)
 {
+
+
+    iPassiveMouseMove(mx,my);
     if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
         //place your codes here
@@ -1099,11 +1203,13 @@ void iSpecialKeyboard(unsigned char key)
 
         ampMulZoom *= zoomScale;
         frqMulZoom = 1/ampMulZoom;
+
     }
     else if(key==GLUT_KEY_DOWN){
 
         ampMulZoom /=zoomScale;
         frqMulZoom = 1/ampMulZoom;
+
     }
     //place your codes for other keys here
 }

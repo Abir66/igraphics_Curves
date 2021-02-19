@@ -455,6 +455,7 @@ void iInitialize(int width=500, int height=500, char *title="iGraphics")
     //
     glAlphaFunc(GL_GREATER,0.0f);
     glEnable(GL_ALPHA_TEST);
+    glutFullScreen();
 
     glutMainLoop();
 }

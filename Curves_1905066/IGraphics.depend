@@ -312,3 +312,29 @@
 	<GL/gl.h>
 	<GL/glu.h>
 
+1613761741 source:d:\curves 1905066\igraphics_curves\curves_1905066\curves_1905066.cpp
+	"iGraphics.h"
+	<stdio.h>
+	<math.h>
+	<string.h>
+	<windows.h>
+
+1613761775 d:\curves 1905066\igraphics_curves\curves_1905066\igraphics.h
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"glut.h"
+	<time.h>
+	<math.h>
+	"glaux.h"
+
+1613760450 d:\curves 1905066\igraphics_curves\curves_1905066\opengl\include\glut.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1613760450 d:\curves 1905066\igraphics_curves\curves_1905066\opengl\include\glaux.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
